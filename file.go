@@ -6,8 +6,10 @@ import (
 	"strings"
 )
 
-var imageExt = []string{"gif", "jpg", "jpeg", "png"}
+// allowed image extensions
+var imageExt = []string{"gif", "jpg", "jpeg", "png", "ico"}
 
+// GetFileFromURL extracts a filename from the end of a URL
 func GetFileFromURL(url string) string {
 	r, err := regexp.Compile("[^/]+$")
 	if err != nil {
@@ -16,6 +18,7 @@ func GetFileFromURL(url string) string {
 	return r.FindString(url)
 }
 
+// FileIsImage checks if a filename has a valid image extension
 func FileIsImage(filename string) bool {
 	fileComponents := strings.Split(filename, ".")
 	ext := fileComponents[len(fileComponents)-1]
