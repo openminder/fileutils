@@ -2,7 +2,6 @@ package fileutils
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -84,7 +83,6 @@ func DownloadFile(source string, targetPath string, filename string) (int64, err
 		return 0, err
 	}
 	resp, err := http.Get(source)
-	fmt.Println(source)
 	defer resp.Body.Close()
 	if err != nil {
 		return 0, err
