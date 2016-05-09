@@ -14,25 +14,30 @@ import (
 )
 
 // GenerateThumbnail generates a thumbanil of a given image path
-func GenerateThumbnail(sourceFilePath, targetFilePath string, width uint, height uint) {
+func GenerateThumbnail(sourceFilePath, targetFilePath string, width uint, height uint, nearestNeighbor bool) {
 	reader, err := os.Open(sourceFilePath)
 	defer reader.Close()
 	m, _, err := image.Decode(reader)
 	if err != nil {
 		log.Fatal(err)
 	}
-	newImage := resize.Thumbnail(width, height, m, resize.Lanczos3)
+	interpolFunc := resize.Lanczos3
+	if nearestNeighbor {
+		interpolFunc = resize.NearestNeighbor
+	}
+	// newImage := resize.Thumbnail(width, height, m, resize.Bicubic)
+	newImage := resize.Thumbnail(width, height, m, interpolFunc)
 	extension := GetExtensionFromFilename(GetFileFromURL(sourceFilePath))
 	buf := new(bytes.Buffer)
 	switch extension {
 	case ".png":
-		png.Encode(buf, newImage)
+		err = png.Encode(buf, newImage)
 	case ".jpg":
-		jpeg.Encode(buf, newImage, nil)
+		err = jpeg.Encode(buf, newImage, nil)
 	case ".jpeg":
-		jpeg.Encode(buf, newImage, nil)
+		err = jpeg.Encode(buf, newImage, nil)
 	case ".gif":
-		gif.Encode(buf, newImage, nil)
+		err = gif.Encode(buf, newImage, nil)
 	default:
 		err = errors.New("image: unknown format: " + extension)
 	}
