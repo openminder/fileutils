@@ -19,7 +19,9 @@ func GetFileFromURL(url string) string {
 	if err != nil {
 		panic(err)
 	}
-	return r.FindString(url)
+	newURL := r.FindString(url)
+	newURL = strings.Split(newURL, "?")[0]
+	return newURL
 }
 
 // GetExtensionFromFilename extracts extension from filename
