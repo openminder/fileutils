@@ -71,6 +71,12 @@ func stringInSlice(a string, list []string) bool {
 
 // DownloadFile saves a file on the file system and returns the files size or an error
 func DownloadFile(source string, targetPath string, filename string) (int64, error) {
+	if source == "" {
+		return 0, nil
+	}
+	if targetPath == "" {
+		return 0, nil
+	}
 	if filename == "" {
 		filename = GetFileFromURL(source)
 	}
@@ -85,15 +91,15 @@ func DownloadFile(source string, targetPath string, filename string) (int64, err
 		return 0, err
 	}
 	resp, err := http.Get(source)
+	if err != nil {
+		return 0, err
+	}
 	defer resp.Body.Close()
-	if err != nil {
-		return 0, err
-	}
 	body, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
 	if err != nil {
 		return 0, err
 	}
+	resp.Body.Close()
 	size, err := SaveToDisc(targetPath+filename, body)
 	if err != nil {
 		return 0, err
